@@ -10,10 +10,8 @@ from sklearn.svm import SVC
 #imports from sequentialcopy
 from sequentialcopy.datasets import spirals
 from sequentialcopy.sampling import GaussianSampler
-from sequentialcopy.models import FeedForwardModel
-from sequentialcopy.models import params_to_vec
-from sequentialcopy.utils import define_loss
-from sequentialcopy.utils import LambdaParameter
+from sequentialcopy.models import FeedForwardModel, params_to_vec
+from sequentialcopy.utils import define_loss, LambdaParameter
 from sequentialcopy.sequential_copy import sequential_train
 
 class SamplerTest(unittest.TestCase):

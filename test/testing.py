@@ -8,10 +8,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 
 #imports from sequentialcopy
-
-#rom rblabelling.AgendaLabelling import AgendaLabelling
-
-from sequentialcopy.datasets import Spirals 
+from sequentialcopy.datasets import spirals 
 from sequentialcopy.sampling import GaussianSampler
 from sequentialcopy.models import FeedForwardModel, params_to_vec
 from sequentialcopy.utils import define_loss, LambdaParameter

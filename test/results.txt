@@ -1,0 +1,24 @@
+/home/nahuel.statuto/.conda/envs/hw_tf2.8/lib/python3.10/site-packages/scipy/__init__.py:146: UserWarning: A NumPy version
+>=1.16.5 and <1.23.0 is required for this version of SciPy (detected version 1.23.1
+  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"
+Traceback (most recent call last):
+  File "/home/nahuel.statuto/SequentialCopy/test/testing.py", line 11, in <module>
+    from sequentialcopy.datasets import Spirals
+ImportError: cannot import name 'Spirals' from 'sequentialcopy.datasets' (/home/nahuel.statuto/SequentialCopy/sequentialcop
+y/datasets.py)
+(hw_tf2.8) nahuel.statuto@srvinv01:~/SequentialCopy/test$ python testing.py > results.txt
+/home/nahuel.statuto/.conda/envs/hw_tf2.8/lib/python3.10/site-packages/scipy/__init__.py:146: UserWarning: A NumPy version
+>=1.16.5 and <1.23.0 is required for this version of SciPy (detected version 1.23.1
+  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"
+...ERROR:root:No such file: 'non_existent_file.txt'. Set 'automatic_fill' = True to create it.
+ERROR:root:No such file: 'None'. Define 'file_path'.
+WARNING:root:No such file: 'non_existent_file.txt'. File created!
+/home/nahuel.statuto/SequentialCopy/sequentialcopy/sampling.py:45: ResourceWarning: unclosed file <_io.BufferedWriter name=
+'non_existent_file.txt'>
+  self.file = self.open_file_for_read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.......
+----------------------------------------------------------------------
+Ran 10 tests in 391.685s
+
+OK

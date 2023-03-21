@@ -3,9 +3,8 @@ from matplotlib import pyplot as plt
 import tensorflow as tf
 from joblib import Parallel, delayed
 
-from sequentialcopy.sampling import GaussianSampler
-from sequentialcopy.utils import define_loss
-from sequentialcopy.utils import LambdaParameter
+from sequentialcopy.gaussian_sampler import GaussianSampler
+from sequentialcopy.utils import define_loss, LambdaParameter
 from sequentialcopy.models import FeedForwardModel
 from sequentialcopy.sequential_copy import sequential_train
 
@@ -19,7 +18,8 @@ def separate_runs(original,
                   X_test=None, 
                   y_test=None, 
                   layers = [64,32,10],
-                  sample_selection=False):
+                  sample_selection=False,
+                  plot_every=False):
     """ Function used to run in parallel. Generate the copy model, optimizer and loss from parameters and train the model"""
 
     d = X_test.shape[1]
@@ -49,7 +49,7 @@ def separate_runs(original,
                             X_test=X_test, 
                             y_test=y_test, 
                             sample_selection=sample_selection,
-                            plot_every=False)
+                            plot_every=plot_every)
 
 def decode_results(data):
     """Function used to decode the results from many parallels runs. Returns an arrays for each run"""

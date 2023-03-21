@@ -9,7 +9,7 @@ from sklearn.svm import SVC
 
 #imports from sequentialcopy
 from sequentialcopy.datasets import spirals 
-from sequentialcopy.sampling import GaussianSampler
+from sequentialcopy.gaussian_sampler import GaussianSampler
 from sequentialcopy.models import FeedForwardModel, params_to_vec
 from sequentialcopy.utils import define_loss, LambdaParameter
 from sequentialcopy.sequential_copy import sequential_train

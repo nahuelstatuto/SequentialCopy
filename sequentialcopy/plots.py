@@ -24,26 +24,31 @@ c_online = '#1984c5'
 c_seq = '#a12e21'
 colors = ["#e1a692", "#de6e56", "#e14b31", "#a12e21", "#1984c5"]
 
-def plot_results(model, plot_type='acc_test'):
+def plot_results(data, sdt=None, plot_type='acc_test', path = 'results/'):
     fig = plt.figure(figsize=(6,3))
     ax = fig.add_subplot(111)
     ax.set_xlabel('Iteration')
-    x = np.arange(1, len(model.acc_test)+1)
-    ax.set_xticks(np.arange(1, len(model.acc_test)+1))
+    x = np.arange(1, len(data)+1)
+    ax.set_xticks(np.arange(1, len(data)+1))
 
     if plot_type == 'acc_test':
-        plt.plot(x, model.acc_test,'o--')
         ax.set_ylabel('Acc test')
+    elif plot_type == 'acc_train':
+        ax.set_ylabel('Acc train')
     elif plot_type == 'nN':
-        plt.plot(x, model.n,'o--')
         ax.set_ylabel('Number of synthetic data points')
     elif plot_type == 'rho':
-        plt.plot(x, model.rho,'o--')
-        ax.set_ylabel('Average uncertainty rho')
+        ax.set_ylabel('Average uncertainty $\rho$')
+    elif plot_type == 'lmda':
+        ax.set_ylabel(r'$\lambda$')
     else:
         pass
-
-    plt.show()
+    
+    plt.plot(x, data,'o--')
+    if sdt:
+        ax.fill_between(x, data-sdt, data+sdt ,alpha=0.2)
+    
+    plt.savefig(path+plot_type+'.pdf',bbox_inches='tight')
 
 def iteration_plot(data, 
                    labels,

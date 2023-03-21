@@ -10,8 +10,9 @@ from matplotlib import pyplot as plt
 from joblib import Parallel, delayed
 
 # imports from sequentialcopy package
-import sequentialcopy.sampling as sp
 import sequentialcopy.parallel_utils as tt
+
+from sequentialcopy.gaussian_sampler import GaussianSampler
 from sequentialcopy.datasets import spirals
 from sequentialcopy.utils import define_loss, LambdaParameter
 from sequentialcopy.models import FeedForwardModel
@@ -69,7 +70,7 @@ seq_copy.compile(loss=loss, optimizer=opt)
 lmda_ = LambdaParameter(lmda=lmda, automatic_lmda=automatic_lmda)
 
 #define the sampling process
-sampler = sp.GaussianSampler(d=d, n_classes=n_classes)
+sampler = GaussianSampler(d=d, n_classes=n_classes)
 
 # setting run parameters
 max_iter = 15 # 30 in the original figure

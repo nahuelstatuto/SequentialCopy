@@ -24,7 +24,7 @@ c_online = '#1984c5'
 c_seq = '#a12e21'
 colors = ["#e1a692", "#de6e56", "#e14b31", "#a12e21", "#1984c5"]
 
-def plot_results(data, sdt=None, plot_type='acc_test', path = 'results/'):
+def plot_results(data, sdt=None, plot_type='acc_test', path = 'plots', name=''):
     fig = plt.figure(figsize=(6,3))
     ax = fig.add_subplot(111)
     ax.set_xlabel('Iteration')
@@ -38,17 +38,21 @@ def plot_results(data, sdt=None, plot_type='acc_test', path = 'results/'):
     elif plot_type == 'nN':
         ax.set_ylabel('Number of synthetic data points')
     elif plot_type == 'rho':
-        ax.set_ylabel('Average uncertainty $\rho$')
+        ax.set_ylabel(r'Average uncertainty $\rho$')
     elif plot_type == 'lmda':
         ax.set_ylabel(r'$\lambda$')
     else:
         pass
     
     plt.plot(x, data,'o--')
-    if sdt:
+    
+    if sdt is not None:
         ax.fill_between(x, data-sdt, data+sdt ,alpha=0.2)
     
-    plt.savefig(path+plot_type+'.pdf',bbox_inches='tight')
+    if name=='':
+        name=plot_type
+    
+    plt.savefig(os.path.join(path,name+'.pdf'),bbox_inches='tight')
 
 def iteration_plot(data, 
                    labels,

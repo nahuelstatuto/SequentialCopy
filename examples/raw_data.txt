@@ -1,2 +1,0 @@
-/home/nahuel.statuto/.conda/envs/hw_tf2.8/lib/python3.10/site-packages/scipy/__init__.py:146: UserWarning: A NumPy version >=1.16.5 and <1.23.0 is required for this version of SciPy (detected version 1.23.1
-  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"

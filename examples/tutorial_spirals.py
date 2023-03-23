@@ -16,6 +16,7 @@ from sequentialcopy.gaussian_sampler import GaussianSampler
 from sequentialcopy.datasets import spirals
 from sequentialcopy.utils import define_loss, LambdaParameter
 from sequentialcopy.models import FeedForwardModel
+from sequentialcopy.lstm_model import LSTMmodel
 from sequentialcopy.sequential_copy import sequential_train
 from sequentialcopy.plots import plot_results
 
@@ -44,7 +45,7 @@ fig = plt.figure(figsize=(6,6))
 ax = fig.add_subplot(111)
 ax.contourf(xx, yy, z, alpha=0.5)
 plot = ax.scatter(X_test[:,0], X_test[:,1], c=-y_test, s=30)
-fig.savefig("plots/original_model.pdf",bbox_inches='tight')
+fig.savefig("plots/original_model_spirals.pdf",bbox_inches='tight')
 
 # setting initial parameters
 d = X_test.shape[1]
@@ -63,7 +64,8 @@ opt = tf.keras.optimizers.Adam(learning_rate=lr)
 loss = define_loss(d, loss_name = 'UncertaintyError')
 
 # define new model
-seq_copy = FeedForwardModel(input_dim=d, hidden_layers=layers, output_dim=n_classes, activation='relu')
+#seq_copy = FeedForwardModel(input_dim=d, hidden_layers=layers, output_dim=n_classes, activation='relu')
+seq_copy = LSTMmodel(input_dim=d, hidden_layers=layers, output_dim=n_classes, activation='relu')
 seq_copy.compile(loss=loss, optimizer=opt)
 
 # define the memory (lambda) parameter
@@ -74,7 +76,7 @@ sampler = GaussianSampler(d=d, n_classes=n_classes)
 
 # setting run parameters
 max_iter = 15 # 30 in the original figure
-n_runs = 10 # 30 in the original figure
+n_runs = 30 # 30 in the original figure
 
 results = Parallel(n_jobs=-1, backend='threading')(delayed(tt.separate_runs)(original,
                                                                           max_iter=max_iter,
@@ -83,18 +85,22 @@ results = Parallel(n_jobs=-1, backend='threading')(delayed(tt.separate_runs)(ori
 
 n, acc_train, acc_test, rho, lmda_vector = tt.decode_results(results)
 
+#getting means and sdt for non trivial results
 acc_test_mean = np.mean(acc_test, axis=0)
 acc_test_sdt = np.std(acc_test, axis=0)
 acc_train_mean = np.mean(acc_train, axis=0)
 acc_train_sdt = np.std(acc_train, axis=0)
+rho_mean = np.mean(rho, axis=0)
+rho_sdt = np.std(rho, axis=0)
 
-# plotting and saving results
-plot_results(acc_test_mean, sdt=acc_test_sdt, plot_type='acc_test')
-plot_results(acc_train_mean, sdt=acc_train_sdt, plot_type='acc_train')
-
+#print raw data
 print('n: ',n)
 print('acc_train: ',acc_train)
 print('acc_test: ',acc_test)
 print('rho: ',rho)
 print('lmda_vector: ',lmda_vector)
 
+# plotting and saving results
+plot_results(acc_test_mean, sdt=acc_test_sdt, plot_type='acc_test', name='LSTM_spirals_acc_test')
+plot_results(acc_train_mean, sdt=acc_train_sdt, plot_type='acc_train', name = 'LSTM_spirals_acc_train')
+plot_results(rho_mean, sdt=rho_sdt, plot_type='rho', name = 'LSTM_spirals_rho')

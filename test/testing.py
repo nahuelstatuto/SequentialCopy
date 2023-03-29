@@ -8,10 +8,10 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 
 #imports from sequentialcopy
-from sequentialcopy.datasets import spirals 
-from sequentialcopy.gaussian_sampler import GaussianSampler
-from sequentialcopy.models import FeedForwardModel, params_to_vec
-from sequentialcopy.utils import define_loss, LambdaParameter
+from sequentialcopy.datasets.datasets import spirals 
+from sequentialcopy.sampler.gaussian_sampler import GaussianSampler
+from sequentialcopy.model.feedforward_model import FeedForwardModel, params_to_vec
+from sequentialcopy.utils.utils import define_loss, LambdaParameter
 from sequentialcopy.sequential_copy import sequential_train
 
 class SamplerTest(unittest.TestCase):

@@ -4,9 +4,9 @@ import numpy as np
 import tensorflow as tf
 from keras.utils import losses_utils
 
-from sequentialcopy.utils import LambdaParameter
-from sequentialcopy.models import params_to_vec
-import sequentialcopy.plots as pt
+from sequentialcopy.utils.utils import LambdaParameter
+from sequentialcopy.model.feedforward_model import params_to_vec
+import sequentialcopy.utils.plots as pt
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -103,7 +103,8 @@ def sequential_train(model,
             
             rho_max = model.loss(tf.one_hot(y_train, sampler.n_classes), model.predict(X_train, verbose=0)).numpy()
             
-            y_pred_ohe = model.predict(X_train, verbose=0)
+            #y_pred_ohe = model.predict(X_train, verbose=0)
+            y_pred_ohe = model.predict(X_train.reshape(np.shape(X_train)[0],np.shape(X_train)[1],1), verbose=0)
             y_pred = np.argmax(y_pred_ohe, axis=1)
             X_errors = X_train[y_pred!=y_train,:]
             y_errors = y_train[y_pred!=y_train]
@@ -148,7 +149,7 @@ def sample_selection_policy(model, X_train, y_train, d, n_classes, thresh):
     
     #reduction parameter set again to AUTO to get an average of all the datapoint
     model.loss.reduction = losses_utils.ReductionV2.AUTO
-
+    
     for i, r in enumerate(rho>=thresh):
         if r:
             y = np.append(y,y_train[i])

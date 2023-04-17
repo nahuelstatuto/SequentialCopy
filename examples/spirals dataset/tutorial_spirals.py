@@ -70,8 +70,8 @@ n_samples_iter=100
 thres=5e-9
 sample_selection=True
 
-max_iter = 30 # 30 in the original figure
-n_runs = 30 # 30 in the original figure
+max_iter = 5 # 30 in the original figure
+n_runs = 1 # 30 in the original figure
 
 results = Parallel(n_jobs=-1, backend='threading')(delayed(separate_runs)(original,
                                                                           model_name=model_name ,
@@ -88,14 +88,15 @@ results = Parallel(n_jobs=-1, backend='threading')(delayed(separate_runs)(origin
                                                                           sample_selection=sample_selection)  for i in range(0, n_runs))
 
 n, acc_train, acc_test, rho, lmda_vector = decode_results(results)  
-
+'''
 #saving raw data
 dump_pickle(n,'n')
 dump_pickle(acc_train,'acc_train')
 dump_pickle(acc_test,'acc_test')
 dump_pickle(rho,'rho')
 dump_pickle(lmda_vector,'lmda')
-
+n, acc_train, acc_test, rho, lmda_vector = decode_results(results)  
+'''
 
 #getting means and sdt 
 acc_test_mean, acc_test_sdt = mean_sdt(acc_test)
@@ -106,8 +107,9 @@ lmda_mean, lmda_sdt = mean_sdt(lmda_vector)
 
 
 # plotting and saving results
-plot_results(acc_test_mean, sdt=acc_test_sdt, plot_type='acc_test', name='acc_test')
-plot_results(acc_train_mean, sdt=acc_train_sdt, plot_type='acc_train', name = 'acc_train')
-plot_results(rho_mean, sdt=rho_sdt, plot_type='rho', name = 'rho')
-plot_results(n_mean, sdt=n_sdt, plot_type='nN', name = 'n')
-plot_results(lmda_mean, sdt=lmda_sdt, plot_type='lmda', name = 'lmda')
+test='test'
+plot_results(acc_test_mean, sdt=acc_test_sdt, plot_type='acc_test', name='acc_test'+test)
+plot_results(acc_train_mean, sdt=acc_train_sdt, plot_type='acc_train', name = 'acc_train'+test)
+plot_results(rho_mean, sdt=rho_sdt, plot_type='rho', name = 'rho'+test)
+plot_results(n_mean, sdt=n_sdt, plot_type='nN', name = 'n'+test)
+plot_results(lmda_mean, sdt=lmda_sdt, plot_type='lmda', name = 'lmda'+test)

@@ -1,24 +1,10 @@
 import tensorflow as tf
 import numpy as np
+from keras.utils.layer_utils import count_params
 tf.keras.backend.set_floatx('float64')
 
-from sequentialcopy.utils.utils import LayerRegularizer
+from sequentialcopy.utils.utils import LayerRegularizer, params_to_vec
 from sequentialcopy.model.base_model import CopyModel
-
-def params_to_vec(model,return_dims = False):
-    """Put model parameters into a list."""
-    final = []
-    dims = 0
-    for layer in model.layers:
-        t0 = tf.reshape(layer.trainable_variables[0], [np.shape(layer.trainable_variables[0])[0]*np.shape(layer.trainable_variables[0])[1]])
-        t1 = tf.reshape(layer.trainable_variables[1], [np.shape(layer.trainable_variables[1])[0]])
-        final.append(tf.concat([t0,t1],0))
-        dims+= np.shape(t0)[0]+np.shape(t1)[0]
-    
-    if return_dims:
-        return final,dims
-    else:
-        return final
 
 class FeedForwardModel(CopyModel):
     """Class to create, compile and train a Keras model."""
@@ -67,7 +53,6 @@ class FeedForwardModel(CopyModel):
                                                 activation='softmax',
                                                 kernel_regularizer=LayerRegularizer(layer_num=len(hidden_layers), model=self),
                                                 name='layer{}'.format(len(hidden_layers))))
-        self.weights_dims = None
         self.theta0 = None
     
     def call(self, inputs):
@@ -86,7 +71,7 @@ class FeedForwardModel(CopyModel):
         """Set the optimizer and the loss function."""
         super(FeedForwardModel, self).compile()
         self.optimizer = optimizer
-        self.loss = loss 
+        self.loss = loss
         
     def train_step(self, data):
         """
@@ -116,3 +101,8 @@ class FeedForwardModel(CopyModel):
         return {'loss' :loss,
                 'reg' : reg,
                 'rho' : rho}
+    
+    def update_theta0(self):
+        self.theta0 = params_to_vec(model=self)
+        self.weights_dims = count_params(self.trainable_weights)
+        

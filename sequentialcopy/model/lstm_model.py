@@ -1,9 +1,10 @@
 import tensorflow as tf
 import numpy as np
 from keras.layers.core import Reshape
+from keras.utils.layer_utils import count_params
 tf.keras.backend.set_floatx('float64')
 
-from sequentialcopy.utils.utils import LayerRegularizer
+from sequentialcopy.utils.utils import LayerRegularizer, params_to_vec
 from sequentialcopy.model.base_model import CopyModel
 
 class LSTMmodel(CopyModel):
@@ -36,14 +37,13 @@ class LSTMmodel(CopyModel):
                
         
         self.dense.append(tf.keras.layers.LSTM(16, input_shape = (None, input_dim),
-                                               kernel_regularizer=LayerRegularizer(layer_num=1, model=self), 
-                                               name = 'layer1'))
+                                               kernel_regularizer=LayerRegularizer(layer_num=0, model=self), 
+                                               name = 'layer0'))
         
         self.dense.append(tf.keras.layers.Dense(output_dim,
                                                 activation='softmax',
-                                                kernel_regularizer=LayerRegularizer(layer_num=2, model=self),
-                                                name='layer2'))
-        self.weights_dims = None
+                                                kernel_regularizer=LayerRegularizer(layer_num=1, model=self),
+                                                name='layer1'))
         self.theta0 = None
     
     def call(self, inputs):
@@ -53,10 +53,13 @@ class LSTMmodel(CopyModel):
                 x = self.layers[layer](x)
         return x
     
+    def predict(self, x, verbose):
+        return super(LSTMmodel,self).predict(x.reshape(np.shape(x)[0],np.shape(x)[1],1), verbose=verbose)
+    
     def fit(self, x, y, lmda, rho_max, epochs, batch_size, verbose):
         self.lmda = lmda
         self.rho_max = rho_max
-        return super(LSTMmodel,self).fit(x,y, epochs=epochs, batch_size=batch_size, verbose=0)
+        return super(LSTMmodel,self).fit(x.reshape(np.shape(x)[0],np.shape(x)[1],1),y, epochs=epochs, batch_size=batch_size, verbose=0)
     
     def compile(self, optimizer, loss):
         """Set the optimizer and the loss function."""
@@ -92,3 +95,7 @@ class LSTMmodel(CopyModel):
         return {'loss' :loss,
                 'reg' : reg,
                 'rho' : rho}
+    
+    def update_theta0(self):
+        self.theta0 = params_to_vec(model=self)
+        self.weights_dims = count_params(self.trainable_weights)

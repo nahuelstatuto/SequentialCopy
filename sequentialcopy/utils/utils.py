@@ -124,23 +124,43 @@ class LayerRegularizer(regularizers.Regularizer):
     def __call__(self, x):
         """Calculates the regularization term value."""
         
-        self.new_weigths = self.get_weigths(self.model.layers[self.layer_num])
+        self.new_weigths = params_to_vec(model=self.model, layer_num=self.layer_num)
+        #self.new_weigths = self.get_weigths(self.model.layers[self.layer_num])
+        
         self.theta0 = self.model.theta0[self.layer_num]
         return tf.divide(tf.reduce_sum(tf.square(self.theta0-self.new_weigths)),
                          tf.constant(self.model.weights_dims, dtype = tf.float64))
-    
-    def get_weigths(self, layer):
-        """Retrieves the weights and bias of the given layer and returns them concatenated.
-        Parameters:
-        layer (object): the layer for which weights and bias will be retrieved.
+
+def params_to_vec(model, layer_num=-1):
+        """Retrieves the model and the layer number and returns their weights and bias concatenated.
+        Params:
+        model: Keras model
+        layer_num: indicate the layer from which obtain the parameters. Default: -1, parameters for the whole model.
 
         Returns:
-        tensor: concatenated weights and bias of the layer.
+        tensor: concatenated weights and bias of the model's layers.
         """
-        #weights of the layer
-        t0 = tf.reshape(layer.trainable_variables[0],
-                        [np.shape(layer.trainable_variables[0])[0]*np.shape(layer.trainable_variables[0])[1]])
-        #bias of the layer
-        t1 = tf.reshape(layer.trainable_variables[1],
-                        [np.shape(layer.trainable_variables[1])[0]])
-        return tf.concat([t0,t1],0)
+        if layer_num==-1:
+            array = model.layers[:]
+        else:
+            array = model.layers[layer_num:layer_num+1]
+        
+        final = []            
+        for layer in array:
+            if isinstance(layer, keras.layers.Dense):
+                sub_layer = layer.trainable_variables[0]
+                t0 = tf.reshape(sub_layer, [np.shape(sub_layer)[0]*np.shape(sub_layer)[1]])
+                sub_layer = layer.trainable_variables[1]
+                t1 = tf.reshape(sub_layer, [np.shape(sub_layer)[0]])
+                final.append(tf.concat([t0,t1],0))
+                
+            elif isinstance(layer, keras.layers.LSTM):
+                sub_layer = layer.trainable_variables[0]
+                l0 = tf.reshape(sub_layer,[np.shape(sub_layer)[0]*np.shape(sub_layer)[1]])
+                sub_layer = layer.trainable_variables[1]
+                l1 = tf.reshape(sub_layer,[np.shape(sub_layer)[0]*np.shape(sub_layer)[1]])
+                sub_layer = layer.trainable_variables[-1]
+                l2=tf.reshape(sub_layer,[np.shape(sub_layer)[0]*1])
+                final.append(tf.concat([l0,l1,l2],0))
+   
+        return final

@@ -5,7 +5,6 @@ import tensorflow as tf
 from keras.utils import losses_utils
 
 from sequentialcopy.utils.utils import LambdaParameter
-from sequentialcopy.model.feedforward_model import params_to_vec
 import sequentialcopy.utils.plots as pt
 
 import warnings
@@ -73,7 +72,9 @@ def sequential_train(model,
         
         # Selection of data before training 
         if sample_selection:
-            X_train, y_train = sample_selection_policy(model, X_train, y_train, sampler.d, sampler.n_classes, thres)            
+            X_train, y_train = sample_selection_policy(model, X_train, y_train, sampler.d, sampler.n_classes, thres)
+        else:
+            temp_ = model.predict(X_train[:1], verbose=0)
         
         model.n.append(len(X_train))
         
@@ -82,9 +83,7 @@ def sequential_train(model,
         lmda = lmda_par.lmda
         
         y_errors = y_train
-        rho_mean = model.loss(tf.one_hot(y_train, sampler.n_classes), model.predict(X_train, verbose=0)).numpy()
-        
-        model.theta0, model.weights_dims = params_to_vec(model, return_dims=True)
+        model.update_theta0()
         
         while len(y_errors)!=0 and n_subtrain<=max_subtrain:
             if n_subtrain > 0:
@@ -103,8 +102,8 @@ def sequential_train(model,
             
             rho_max = model.loss(tf.one_hot(y_train, sampler.n_classes), model.predict(X_train, verbose=0)).numpy()
             
-            #y_pred_ohe = model.predict(X_train, verbose=0)
-            y_pred_ohe = model.predict(X_train.reshape(np.shape(X_train)[0],np.shape(X_train)[1],1), verbose=0)
+            y_pred_ohe = model.predict(X_train, verbose=0)
+            #y_pred_ohe = model.predict(X_train.reshape(np.shape(X_train)[0],np.shape(X_train)[1],1), verbose=0)
             y_pred = np.argmax(y_pred_ohe, axis=1)
             X_errors = X_train[y_pred!=y_train,:]
             y_errors = y_train[y_pred!=y_train]

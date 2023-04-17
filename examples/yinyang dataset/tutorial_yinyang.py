@@ -45,7 +45,6 @@ n_classes = len(np.unique(y_test))
 
 # define optimizer and loss 
 lr = 0.0005
-lr = 0.05
 
 # define new model
 layers = [] # LSTM was defined with a fixed arquitecture
@@ -59,12 +58,12 @@ automatic_lmda = False
 sampler_name = 'Balancer'
 
 # setting run parameters
-n_samples_iter=20
+n_samples_iter=100
 
 thres=5e-9
 sample_selection=False
 
-max_iter = 2
+max_iter = 30
 n_runs = 1
 
 results = Parallel(n_jobs=-1, backend='threading')(delayed(separate_runs)(original,
@@ -82,6 +81,7 @@ results = Parallel(n_jobs=-1, backend='threading')(delayed(separate_runs)(origin
                                                                           sample_selection=sample_selection)  for i in range(0, n_runs))
 
 n, acc_train, acc_test, rho, lmda_vector = decode_results(results)  
+
 
 #saving raw data
 dump_pickle(n,'n')
